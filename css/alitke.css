@@ -1,0 +1,35 @@
+.reveal img.logo {
+	position: fixed; top: 0.25em; right: 0.25em;
+	width: 5em;
+	z-index: 1000;
+	opacity: 0.3;
+	padding-top: 0.25em;
+	padding-right: 0.25em;
+}
+
+.reveal img.overlay {
+	position: absolute;
+	width: inherit;
+	height: inherit;
+}
+
+
+.reveal div.slide-background::after {
+	content: "";
+	background: url('../images/ovirt-logo.svg');
+	background-repeat: no-repeat;
+	background-position: right top;
+	background-size: 5em;
+	opacity: 0.5;
+	top: 0; bottom: 0; right: 0; left: 0;
+	position: absolute;
+	z-index: -1;
+}
+
+.reveal .footer {
+	font-size: 10pt;
+	text-align: center;
+	width: 100%;
+	position: absolute;
+	bottom: 0.25em;
+}

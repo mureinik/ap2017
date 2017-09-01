@@ -1,0 +1,96 @@
+Title: All your storage are belong to Ansible
+
+Abstract:
+Today's datacenters are filled with storage arrays that speak different languages.
+Even a workflow as simple as provisioning a LUN is vendor specific, non-portable,
+and can be difficult to automate.  Ansible provides a robust community and rich
+platform for developing portable automation and with some secret sauce we can create
+a volume on any storage backend using the same playbook.  In this talk Adam will
+introduce the quarry[1] Ansible role, show how it works, and demonstrate how to
+add support for new storage backends and new storage operations.
+
+[1] https://galaxy.ansible.com/aglitke/quarry
+
+Track:
+Open source storage
+
+Length:
+30 min
+
+Level:
+Intermediate
+
+Audience:
+This talk is aimed at systems administrators and software developers who need to
+manage storage arrays or other IT infrastructure.  Basic knowledge of storage
+provisioning and Ansible is assumed.
+
+Bio:
+Adam began his career as a Linux kernel developer focused on memory management.
+Over the years he has contributed to many projects including: linux, libhugetlbfs,
+qemu, libvirt, memory overcommitment manager (mom), and oVirt.  These days, Adam
+works at Red Hat on storage virtualization for oVirt.  He enjoys writing code that
+is resilient to the everyday mayhem in datacenters such as power failure, network
+outages, and under-caffienated sysadmins.
+
+
+Outline:
+
+About enterprise storage:
+ - Lots of vendors (screenshot of vendor logos)
+ - Lots of neat features (cloud of storage features)
+ - Lots of APIs (screenshots of the interfaces used to provision volumes)
+
+Problem
+ - How can we build common tooling to achieve
+    - Better automation and management in IT and DevOps
+    - Broad vendor support and effient control plane operations for virtualization and container orchestration
+ - Openstack has achieved this for itself with cinder but it's hard to use outside of Openstack
+
+Solution
+ - Abstraction!
+ - Standardized set of cinder-like operations
+ - Ansible as common ground
+   - Low deployment complexity
+   - Easily integrates with software and processes
+   - Active collaborative community
+
+Quarry
+ - Ansible Role to abstract storage provisioning using templating
+ - Playbooks define operations to be executed against storage targets
+
+Operations
+ - Defines a storage provisioning action that may need to be performed
+ - Create / Delete volume
+ - Attach / Detach volume
+ - Create / Delete snapshot
+
+Backends
+ - A kind of storage system with a unique way of performing operations
+ - Ceph
+ - Gluster
+ - Netapp Data ONTAP
+ - Dell EMC XtremIO
+ - IBM DS8000
+
+Targets
+ - An instance of a backend defined by configuration parameters
+   - API URL
+   - Credentials
+   - Namespace (cluster / pool / vserver)
+
+Configure a new target
+
+Create a volume
+
+Delete the volume
+
+Configure a second target
+
+Change original playbooks to use the new target
+
+Adding new backends
+
+Adding new operations
+
+Links

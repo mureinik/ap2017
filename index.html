@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-    <title>My Title</title>
+    <title>All your storage are belong to Ansible</title>
 		<meta name="author" content="Adam Litke">
 
 		<meta name="apple-mobile-web-app-capable" content="yes">
@@ -39,22 +39,225 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h2>My Title</h2>
-          <h4>My subtitle</h4>
+					<h2>All your storage<br/>
+                        are belong to Ansible</h2>
+                    <img src="images/allyourbase.gif" class="plain">
 					<p>
 						<small>
 							Adam Litke - <a href=mailto:alitke@redhat.com>alitke@redhat.com</a><br>
                             Senior Software Engineer - Red Hat<br>
-							August Penguin - Date
+							August Penguin - 7.9.2017
 						</small>
 					</p>
 				</section>
+
+                <section>
+                    <h2>Enterprise Storage</h2>
+                    <img src="images/storage-vendor-cloud.png" class="plain"/>
+                </section>
+
+                <section>
+                    <h2>Enterprise Storage</h2>
+                    <img src="images/feature-cloud.png" class="plain"/>
+                </section>
+
+                <section>
+                    <h2>Enterprise Storage</h2>
+                    Screenshots of APIs
+                </section>
+
+                <section>
+                    <h2>We can make this better</h2>
+                    <ul>
+                        <li>What?
+                            <ul>
+                                <li>Vendor-neutral automation</li>
+                                <li>Efficient control plan operations</li>
+                            </ul>
+                        </li>
+                        <li>Who?
+                            <ul>
+                                <li>IT Operations / DevOps</li>
+                                <li>Virtualization</li>
+                                <li>Container orchestration</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Been there, Done that</h2>
+                    <ul>
+                        <li>What about cinder?</li>
+                        <li>&#10004;Mature and stable</li>
+                        <li>&#10004;Broad vendor support</li>
+                        <li>&#10004;Durable API and model</li>
+                        <li>&#10006;Too tightly coupled to Openstack</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>What we want</h2>
+                    <ul>
+                        <li>All the goodness of cinder plus...</li>
+                        <li>Low deployment complexity</li>
+                        <li>Easy integration with software and processes</li>
+                        <li>Active, collaborative community</li>
+                        <li>... Ansible!</li>
+                        <!-- Ansible logo? -->
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Quarry</h2>
+                    <ul>
+                        <li>Ansible role to abstract storage provisioning operations</li>
+                        <li>Jinja templating plus (not) secret sauce</li>
+                        <li>Playbooks define tasks that execute against storage targets</li>
+                        <li><code>ansible-galaxy install aglitke.quarry</code></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Quarry operations</h2>
+                    <!-- operation icon? -->
+                    <ul>
+                        <li>Defines a generic storage operation (verb)</li>
+                        <li>Create / Delete volume</li>
+                        <li>Attach / Detach volume</li>
+                        <li>Create / Delete snapshot</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Quarry backends</h2>
+                    <!-- backend icon? -->
+                    <ul>
+                        <li>Storage type with a unique way of performing operations</li>
+                        <li>Ceph</li>
+                        <li>Gluster</li>
+                        <li>Netapp Data ONTAP</li>
+                        <li>Dell EMC XtremIO</li>
+                        <li>IBM DS8000</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Quarry targets</h2>
+                    <!-- Target Icon? -->
+                    <ul>
+                        <li>A backend instance defined by configuration parameters</li>
+                        <li>API URL</li>
+                        <li>Login credentials</li>
+                        <li>Namespace (cluster / pool / vserver)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>How to use it</h2>
+                        <ol>
+                            <li>Configure a storage target</li>
+                            <li>Write a playbook using the quarry role</li>
+                            <li>Run the playbook</li>
+                        </ol>
+                    </section>
+                </section>
+
+                <section>
+                    <h2>Configure a storage target</h2>
+                    <pre><code data-trim data-noescape>
+---
+target_host: localhost
+target_user:
+backend: ceph
+backend_config:
+  osd: 192.168.2.18
+  id: admin
+  key: AQDfdKxYTCs0LSBAt08Qk23Z+ecgAAb2Je2YuA==
+  pool: volumes
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Write a playbook</h2>
+                    <pre><code data-trim data-noescape>
+---
+- hosts: localhost
+  roles:
+    - aglitke.quarry
+
+  vars:
+    generate_only: false
+    generated_playbook: "/tmp/playbook.yml"
+
+    target: myceph
+    operation: create_volume
+    params:
+      id: 80a690f4-9fb7-4615-bc83-709cfabb42a4
+      size: 1
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Run the playbook</h2>
+                    <img src="images/run-playbook-noloop.gif" class="plain"/>
+                </section>
+
+                <section>
+                    <h2>What happened?</h2>
+                    <ol>
+                        <li>Identify the target and operation</li>
+                        <li>Load target configuration</li>
+                        <li>Select the template for this backend/operation</li>
+                        <li>Generate a playbook from template and parameters</li>
+                        <li>Execute generated playbook</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h2>Operation template</h2>
+                    <pre><code data-trim data-noescape>
+- hosts: {{ target_host }}
+  remote_user: {{ target_user }}
+
+  tasks:
+  - name: Setup auth
+    copy:
+        content: "{{ backend_config.key }}"
+        dest: /tmp/quarry_ceph_key
+
+  - name: Create a volume
+    shell: >
+        rbd -m {{ backend_config.osd }}
+        --id {{ backend_config.id }}
+        --keyfile /tmp/quarry_ceph_key
+        -p {{ backend_config.pool }}
+        create {{ params.id }} --size {{ params.size }}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Generated playbook</h2>
+                    <img src="images/generated.png" class="plain"/>
+                </section>
+
+                <section>
+                    <h2>Using a different target?</h2>
+                </section>
 
                 <section>
                     <h2>Agenda</h2>
                     <ul>
                     </ul>
                 </section>
+
+				<section>
+					<h2>Syntax test</h2>
+					<pre><code data-trim data-noescape>
+
+					</code></pre>
+				</section>
 
                 <section>
                     <h2>Future work</h2>

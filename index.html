@@ -88,14 +88,33 @@
                 </section>
 
                 <section>
-                    <h2>Been there, Done that</h2>
-                    <ul>
-                        <li>What about cinder?</li>
-                        <li>&#10004;Mature and stable</li>
-                        <li>&#10004;Broad vendor support</li>
-                        <li>&#10004;Durable API and model</li>
-                        <li>&#10006;Too tightly coupled to Openstack</li>
-                    </ul>
+                    <h2>For example</h2>
+                    <p>My create volume</p>
+                    <pre><code data-trim data-noescape>
+target: my-ceph-storage
+operation: create_volume
+params:
+  id: 80a690f4-9fb7-4615-bc83-709cfabb42a4
+  size: 1
+                    </code></pre>
+                    <p>Your create volume</p>
+                    <pre><code data-trim data-noescape>
+target: your-netapp-storage
+operation: create_volume
+params:
+  id: 80a690f4-9fb7-4615-bc83-709cfabb42a4
+  size: 1
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>But what about cinder</h2>
+                        <ul style="list-style: none">
+                            <li>&#10004;Mature and stable</li>
+                            <li>&#10004;Broad vendor support</li>
+                            <li>&#10004;Durable API and model</li>
+                            <li>&#10006;Too tightly coupled to Openstack</li>
+                        </ul>
                 </section>
 
                 <section>
@@ -139,9 +158,8 @@
                 </section>
 
                 <section>
-                    <h2>Quarry</h2>
+                    <h2>Quarry Ansible Role</h2>
                     <ul>
-                        <li>Ansible role to abstract storage provisioning operations</li>
                         <li>Jinja templating plus (not) secret sauce</li>
                         <li>Playbooks define tasks that execute against storage targets</li>
                         <li><code>ansible-galaxy install aglitke.quarry</code></li>
@@ -150,8 +168,8 @@
 
                 <section>
                     <h2>Operations</h2>
+                    <p>A common API to perform a storage task</p>
                     <ul>
-                        <li>An common API to perform a storage task</li>
                         <li>Every backend provides an implementation</li>
                         <li>Create / Delete volume</li>
                         <li>Attach / Detach volume</li>
@@ -161,8 +179,8 @@
 
                 <section>
                     <h2>Backends</h2>
+                    <p>Storage type with a unique way of performing operations</p>
                     <ul>
-                        <li>Storage type with a unique way of performing operations</li>
                         <li>Ceph</li>
                         <li>Gluster</li>
                         <li>Netapp Data ONTAP</li>
@@ -173,8 +191,8 @@
 
                 <section>
                     <h2>Targets</h2>
+                    <p>A backend instance defined by configuration parameters</p>
                     <ul>
-                        <li>A backend instance defined by configuration parameters</li>
                         <li>API URL</li>
                         <li>Login credentials</li>
                         <li>Namespace (cluster / pool / vserver)</li>

@@ -45,7 +45,7 @@ Problem
  - How can we build common tooling to achieve
     - Better automation and management in IT and DevOps
     - Broad vendor support and effient control plane operations for virtualization and container orchestration
- - Openstack has achieved this for itself with cinder but it's hard to use outside of Openstack
+ - Openstack has achieved this for itself with Cinder but it's hard to use outside of Openstack
 
 Solution
  - Abstraction!

@@ -41,7 +41,7 @@
 				<section>
 					<h2>All your storage<br/>
                         are belong to Ansible</h2>
-                    <img src="images/allyourbase.gif" class="plain">
+                    <img src="images/allyourbase.gif" class="plain" style="width: 50%;">
 					<p>
 						<small>
 							Adam Litke - <a href=mailto:alitke@redhat.com>alitke@redhat.com</a><br>
@@ -52,34 +52,36 @@
 				</section>
 
                 <section>
-                    <h2>Enterprise Storage</h2>
+                    <h2>Storage Vendors</h2>
                     <img src="images/storage-vendor-cloud.png" class="plain"/>
                 </section>
 
                 <section>
-                    <h2>Enterprise Storage</h2>
-                    <img src="images/feature-cloud.png" class="plain"/>
+                    <h2>Storage Features</h2>
+                    <img src="images/feature-cloud-2.png" class="plain"/>
                 </section>
 
                 <section>
-                    <h2>Enterprise Storage</h2>
-                    Screenshots of APIs
+                    <h2>Storage Management APIs</h2>
+                    <img src="images/storage-apis.png" class="plain"/>
                 </section>
 
                 <section>
-                    <h2>We can make this better</h2>
+                    <h2>The readout</h2>
                     <ul>
-                        <li>What?
+                        <li>Vendor and feature diversity can be good</li>
+                        <li>API fragmentation is bad for collaboration</li>
+                        <li>Can we build a community including:
+                            <ul>
+                                <li>IT / DevOps </li>
+                                <li>Virtualization</li>
+                                <li>Container orchestration</li>
+                            </ul>
+                        </li>
+                        <li>To provide:
                             <ul>
                                 <li>Vendor-neutral automation</li>
                                 <li>Efficient control plan operations</li>
-                            </ul>
-                        </li>
-                        <li>Who?
-                            <ul>
-                                <li>IT Operations / DevOps</li>
-                                <li>Virtualization</li>
-                                <li>Container orchestration</li>
                             </ul>
                         </li>
                     </ul>
@@ -97,14 +99,42 @@
                 </section>
 
                 <section>
-                    <h2>What we want</h2>
+                    <h2>The plan</h2>
+                    <table>
+                        <tr>
+                            <td class="operand"></td>
+                            <td class="operand">cinder</td>
+                        </tr>
+                        <tr>
+                            <td class="operand">-</td>
+                            <td class="operand">deployment complexity</td>
+                        </tr>
+                        <tr>
+                            <td class="operand">-</td>
+                            <td class="operand">vertical integration</td>
+                        </tr>
+                        <tr>
+                            <td >+</td>
+                            <td >active community</td>
+                        </tr>
+                        <tr>
+                            <td>=</td>
+                            <td>profit!</td>
+                        </tr>
+                    </table>
+                    <div class="fragment image-overlay">
+                        <img class="plain" src="images/ansible.png"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>What is Ansible?</h2>
                     <ul>
-                        <li>All the goodness of cinder plus...</li>
-                        <li>Low deployment complexity</li>
-                        <li>Easy integration with software and processes</li>
-                        <li>Active, collaborative community</li>
-                        <li>... Ansible!</li>
-                        <!-- Ansible logo? -->
+                        <li>Simple, human readable automation</li>
+                        <li>Declarative model</li>
+                        <li>Agentless</li>
+                        <li>Large ecosystem of modules and roles</li>
+                        <li><a href="http://www.ansible.com">ansible.com</a></li>
                     </ul>
                 </section>
 
@@ -119,10 +149,10 @@
                 </section>
 
                 <section>
-                    <h2>Quarry operations</h2>
-                    <!-- operation icon? -->
+                    <h2>Operations</h2>
                     <ul>
-                        <li>Defines a generic storage operation (verb)</li>
+                        <li>An common API to perform a storage task</li>
+                        <li>Every backend provides an implementation</li>
                         <li>Create / Delete volume</li>
                         <li>Attach / Detach volume</li>
                         <li>Create / Delete snapshot</li>
@@ -130,8 +160,7 @@
                 </section>
 
                 <section>
-                    <h2>Quarry backends</h2>
-                    <!-- backend icon? -->
+                    <h2>Backends</h2>
                     <ul>
                         <li>Storage type with a unique way of performing operations</li>
                         <li>Ceph</li>
@@ -143,8 +172,7 @@
                 </section>
 
                 <section>
-                    <h2>Quarry targets</h2>
-                    <!-- Target Icon? -->
+                    <h2>Targets</h2>
                     <ul>
                         <li>A backend instance defined by configuration parameters</li>
                         <li>API URL</li>
@@ -207,7 +235,7 @@ backend_config:
                 <section>
                     <h2>What happened?</h2>
                     <ol>
-                        <li>Identify the target and operation</li>
+                        <li>Validate playbook variables</li>
                         <li>Load target configuration</li>
                         <li>Select the template for this backend/operation</li>
                         <li>Generate a playbook from template and parameters</li>
@@ -216,8 +244,63 @@ backend_config:
                 </section>
 
                 <section>
-                    <h2>Operation template</h2>
+                    <h2>Quarry role tasks</h2>
                     <pre><code data-trim data-noescape>
+---
+- include: check_vars.yml
+
+- include: make_playbook.yml
+  when: generated_playbook is defined
+
+- name: Run playbook
+  shell: ansible-playbook {{ generated_playbook }}
+  when:
+  - generated_playbook is defined
+  - not generate_only
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Validating variables</h2>
+                    <pre class="stretch"><code data-trim data-noescape>
+- name: Checking that required playbook variables are set
+  fail: msg="Variable {{ item }} is not defined in the playbook"
+  with_items:
+  - target
+  - operation
+  - params
+  when: vars[item] is undefined
+
+- name: Load target definition
+  include_vars:
+    file: "{{ target_definitions_dir }}/{{ target }}.yml"
+
+- name: Checking that required target variables are set
+  fail: msg="Variable {{ item }} missing from the target definition {{ target }}"
+  with_items:
+  - target_host
+  - target_user
+  - backend
+  - backend_config
+  when: vars[item] is undefined
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Generate playbook</h2>
+                    <pre><code data-trim data-noescape>
+---
+- name: Generate playbook
+  template:
+    src: "{{ playbook_templates_dir }}/\
+                {{ backend }}/{{ operation }}.yml.j2"
+    dest: "{{ generated_playbook }}"
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Operation template</h2>
+                    <pre class="stretch"><code data-trim data-noescape>
 - hosts: {{ target_host }}
   remote_user: {{ target_user }}
 
@@ -235,6 +318,7 @@ backend_config:
         -p {{ backend_config.pool }}
         create {{ params.id }} --size {{ params.size }}
                     </code></pre>
+                    Just a playbook!
                 </section>
 
                 <section>
@@ -244,35 +328,58 @@ backend_config:
 
                 <section>
                     <h2>Using a different target?</h2>
+                    <pre><code data-trim data-noescape>
+---
+- hosts: localhost
+  roles:
+    - aglitke.quarry
+
+  vars:
+    generate_only: false
+    generated_playbook: "/tmp/playbook.yml"
+
+    target: myxtremio <== (change me) ==<
+    operation: create_volume
+    params:
+      id: 80a690f4-9fb7-4615-bc83-709cfabb42a4
+      size: 1
+                    </code></pre>
                 </section>
 
                 <section>
-                    <h2>Agenda</h2>
+                    <h2>Integrating quarry</h2>
                     <ul>
+                        <li>Use the quarry role in your existing Ansible workflows
+                            <ul>
+                                <li>Orchestrate backups via snapshots</li>
+                                <li>Provision luns for new hardware or VMs</li>
+                                <li>Infrastructure as code</li>
+                            </ul>
+                        </li>
+                        <li>Add provisioning support to applications
+                            <ul>
+                                <li>Generate playbooks in response to application events</li>
+                                <li>Run ansible via shell or python SDK</li>
+                                <li>Results available in JSON format</li>
+                            </ul>
+                        </li>
                     </ul>
                 </section>
 
-				<section>
-					<h2>Syntax test</h2>
-					<pre><code data-trim data-noescape>
-
-					</code></pre>
-				</section>
-
                 <section>
-                    <h2>Future work</h2>
-                    <ul>
-                    </ul>
-                </section>
-
-                <section>
-                    <h2>Links</h2>
-                    <ul>
-                    </ul>
+                    <h2>Work in progress</h2>
+                    <li>Make it easier to write quarry playbooks</li>
+                    <li>Add support for more storage backends</li>
+                    <li>Add more operations</li>
                 </section>
 
                 <section>
                     <h2>Questions?</h2>
+                    <a href="https://galaxy.ansible.com/aglitke/prism/">
+                        https://galaxy.ansible.com/aglitke/prism/</a><br/>
+                    <a href="https://galaxy.ansible.com/aglitke/quarry/">
+                        https://galaxy.ansible.com/aglitke/quarry/
+                    </a>
                 </section>
 			</div>
 		</div>
